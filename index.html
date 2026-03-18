@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Journey for You ✨</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #ffafbd;
+            --secondary: #ffc3a0;
+            --glass: rgba(255, 255, 255, 0.12);
+            --wa-green: #25D366;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            background: #0f0c29;
+            background: linear-gradient(to bottom, #24243e, #302b63, #0f0c29);
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            z-index: 10;
+            width: 85%;
+            max-width: 400px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .stage { display: none; animation: fadeIn 0.8s ease; }
+        .stage.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.2rem; color: #eee; }
+        p { font-size: 0.9rem; line-height: 1.6; color: #ddd; margin-bottom: 20px; }
+
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            padding: 12px 30px;
+            color: #333;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 175, 189, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        .btn-wa {
+            background: var(--wa-green);
+            color: white;
+            display: none; /* Muncul di akhir */
+            margin-top: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            text-align: center;
+            outline: none;
+        }
+
+        #no-btn { position: absolute; transition: 0.2s; z-index: 999; }
+
+        .music-control {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 100;
+            background: var(--glass);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+
+    <audio id="myAudio" loop>
+        <!-- Musik Piano Romantis -->
+        <source src="https://www.bensound.com/bensound-music/bensound-tenderness.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="music-control" onclick="toggleMusic()">🎵</div>
+
+    <div class="container">
+        
+        <!-- STAGE 1: START -->
+        <div id="stage1" class="stage active">
+            <h1>Halo Kamu...</h1>
+            <p>Aku nemu sesuatu yang cuma bisa dibuka sama orang yang punya kesabaran tinggi. Kamu mau coba?</p>
+            <button class="btn" onclick="startJourney()">Buka Sekarang</button>
+        </div>
+
+        <!-- STAGE 2: HIDDEN KEY -->
+        <div id="stage2" class="stage">
+            <h2>Cari Kuncinya! 🔍</h2>
+            <p>Ada tombol rahasia transparan di area ini. Klik terus sampai kamu menemukannya!</p>
+            <div id="search-area" style="height: 100px; cursor: crosshair; display: flex; align-items: center; justify-content: center;" onclick="clickSearch()">
+                <span id="click-hint" style="font-size: 0.7rem; color: #888;">[ Klik di sini terus-menerus ]</span>
+            </div>
+        </div>
+
+        <!-- STAGE 3: RIDDLE 1 -->
+        <div id="stage3" class="stage">
+            <h2>Teka-teki #1</h2>
+            <p>"Aku selalu mengikutimu, tapi aku tidak bisa disentuh. Aku ada di bawah cahaya, tapi hilang dalam kegelapan. Siapakah aku?"</p>
+            <input type="text" id="ans1" placeholder="Jawaban kamu...">
+            <button class="btn" onclick="checkAns1()">Kirim Jawaban</button>
+        </div>
+
+        <!-- STAGE 4: RIDDLE 2 -->
+        <div id="stage4" class="stage">
+            <h2>Teka-teki #2</h2>
+            <p>"Aku tidak punya suara, tapi bisa menceritakan segalanya. Aku tidak punya sayap, tapi bisa membawamu ke mana saja lewat pikiran. Apakah aku?"</p>
+            <input type="text" id="ans2" placeholder="Jawaban kamu...">
+            <button class="btn" onclick="checkAns2()">Kirim Jawaban</button>
+            <p style="font-size: 0.7rem; color: #aaa; margin-top: 10px;">Hint: Sesuatu yang kita baca (4 huruf)</p>
+        </div>
+
+        <!-- STAGE 5: PATIENCE -->
+        <div id="stage5" class="stage">
+            <h2>Satu lagi...</h2>
+            <p>Klik tombol di bawah ini 15 kali untuk membuka segel terakhir.</p>
+            <h3 id="count-display" style="color: var(--primary);">0</h3>
+            <button class="btn" onclick="patienceClick()">KLIK!</button>
+        </div>
+
+        <!-- STAGE 6: FINAL QUESTION -->
+        <div id="stage6" class="stage">
+            <h2>Terima kasih kesabarannya..</h2>
+            <p>Aku cuma mau tanya satu hal kecil sebelum pesan terakhirnya terbuka...</p>
+            <h3>Boleh nggak kalau aku tetap di sini, jadi orang yang selalu support kamu?</h3>
+            <div style="height: 120px; position: relative; margin-top: 20px;">
+                <button class="btn" onclick="finalLetter()">Boleh banget ❤️</button>
+                <button id="no-btn" class="btn" style="background: #555; color: #eee;">Nggak</button>
+            </div>
+        </div>
+
+        <!-- STAGE 7: THE LETTER & WA -->
+        <div id="stage7" class="stage">
+            <h1>For You 🌙</h1>
+            <div id="typewriter" style="text-align: left; font-style: italic; font-size: 0.85rem; min-height: 160px; border-left: 2px solid var(--primary); padding-left: 15px; margin-bottom: 20px;"></div>
+            
+            <!-- TOMBOL WHATSAPP (GANTI NOMOR DI SINI) -->
+            <a href="https://wa.me/628123456789?text=Pwisss%20aku%20kangen%20kamu%20bangettt" id="wa-button" class="btn btn-wa" target="_blank">
+                Kirim Pesan ke WA ✨
+            </a>
+
+            <br>
+            <button class="btn" onclick="location.reload()" style="background: none; border: 1px solid var(--primary); color: white; font-size: 0.7rem; margin-top: 30px;">Ulangi?</button>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        const audio = document.getElementById("myAudio");
+        function toggleMusic() {
+            return audio.paused ? audio.play() : audio.pause();
+        }
+
+        function startJourney() {
+            audio.play().catch(e => console.log("Audio play failed"));
+            nextStage(2);
+        }
+
+        function nextStage(num) {
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('stage' + num).classList.add('active');
+        }
+
+        // Stage 2: Click Search
+        let sClicks = 0;
+        function clickSearch() {
+            sClicks++;
+            if(sClicks > 8) {
+                Swal.fire('Berhasil!', 'Kunci rahasia ditemukan.', 'success');
+                nextStage(3);
+            }
+        }
+
+        // Stage 3: Shadow (Bayangan)
+        function checkAns1() {
+            const val = document.getElementById('ans1').value.toLowerCase();
+            if(val.includes('bayangan')) {
+                nextStage(4);
+            } else {
+                Swal.fire('Salah', 'Coba perhatikan dirimu saat di bawah lampu.', 'error');
+            }
+        }
+
+        // Stage 4: Book (Buku)
+        function checkAns2() {
+            const val = document.getElementById('ans2').value.toLowerCase();
+            if(val.includes('buku')) {
+                nextStage(5);
+            } else {
+                Swal.fire('Hampir!', 'Tempat cerita dituliskan.', 'error');
+            }
+        }
+
+        // Stage 5: Patience
+        let pClicks = 0;
+        function patienceClick() {
+            pClicks++;
+            document.getElementById('count-display').innerText = pClicks;
+            if(pClicks >= 15) {
+                nextStage(6);
+            }
+        }
+
+        // Stage 6: Dodging Button
+        const noBtn = document.getElementById('no-btn');
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 150);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        });
+
+        // Final Stage: Letter & WA Button
+        function finalLetter() {
+            nextStage(7);
+            const message = "Mungkin aku bukan orang yang paling sempurna, tapi aku adalah orang yang paling beruntung karena bisa mengenalmu. Terima kasih sudah meluangkan waktumu buat mainin game nggak jelas ini. Aku cuma mau bilang kalau kehadiranmu itu berarti banget buat aku. Kamu itu alasan aku buat tetap semangat tiap hari. Jadi, jangan bosen ya sama aku? ✨";
+            
+            let i = 0;
+            const target = document.getElementById('typewriter');
+            const waBtn = document.getElementById('wa-button');
+
+            function type() {
+                if (i < message.length) {
+                    target.innerHTML += message.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                } else {
+                    // Munculkan tombol WA setelah ketikan selesai
+                    waBtn.style.display = 'inline-block';
+                }
+            }
+            type();
+        }
+
+        // Particles
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "opacity": { "value": 0.3 },
+                "size": { "value": 2, "random": true },
+                "line_linked": { "enable": false },
+                "move": { "enable": true, "speed": 1.5, "direction": "top", "random": true, "out_mode": "out" }
+            }
+        });
+    </script>
+</body>
+</html>
